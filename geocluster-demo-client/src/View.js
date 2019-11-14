@@ -1,11 +1,10 @@
 import React from "react";
-import { values } from "mobx";
-import { observer } from "mobx-react";
+import {values} from "mobx";
+import {observer} from "mobx-react";
 
 export const PointView = observer(props => (
   <React.Fragment>
-    <span>({props.point.x}, </span>
-    <span>{props.point.y})</span>
+    <span>({props.point.x}, {props.point.y})</span>
   </React.Fragment>
 ));
 
@@ -13,13 +12,13 @@ export const EntityView = observer(props => (
   <tr>
     <td>{props.entity.id}</td>
     <td>
-      <PointView point={props.entity.location} />
+      <PointView point={props.entity.location}/>
     </td>
   </tr>
 ));
 
 export const FrameView = props => (
-  <table>
+  <table width="100%">
     <tr>
       <th>Left</th>
       <th>Top</th>
@@ -35,17 +34,17 @@ export const FrameView = props => (
   </table>
 );
 
-export const ModelView = observer(props => (
+export const SceneTable = observer(props => (
   <div>
     <div>Entity count: {props.scene.entitiesCount}</div>
-    <FrameView frame={props.scene.frame} />
-    <table>
+    <FrameView frame={props.scene.frame}/>
+    <table width="100%">
       <tr>
         <th>Id</th>
         <th>Location</th>
       </tr>
       {values(props.scene.entities).map(entity => (
-        <EntityView entity={entity} />
+        <EntityView entity={entity}/>
       ))}
     </table>
   </div>
@@ -77,7 +76,7 @@ class ScenePainter {
     this.scene.entities.forEach(
       entity => {
         const p = entity.location;
-        this.ctx.fillRect(p.x,p.y,1,1)
+        this.ctx.fillRect(p.x - 0.5, p.y - 0.5, 1, 1)
       }
     );
   }
@@ -87,22 +86,21 @@ class ScenePainter {
     this.paintBackground();
     this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2)
     this.ctx.scale(10, 10);
-    const frame = this.scene.frame;
     this.paintSceneFrame();
     this.paintEntities();
     this.ctx.restore();
   }
 }
 
-export class ModelCanvas extends React.Component {
+export class SceneCanvas extends React.Component {
   componentDidMount() {
     new ScenePainter(this.refs.canvas, this.props.scene).paint();
   }
 
   render() {
-    return(
+    return (
       <div>
-        <canvas ref="canvas" width={640} height={640} />
+        <canvas ref="canvas" width={800} height={800}/>
       </div>
     )
   }
