@@ -1,4 +1,5 @@
-import {types} from 'mobx-state-tree'
+import {types, flow} from 'mobx-state-tree'
+import {Entities} from './service';
 
 export const Point = types.model({
   x: types.optional(types.number, 0.0),
@@ -37,6 +38,12 @@ export const Scene = types
       }
     }
   })).actions(self => {
+    const fetchEntities = flow(function* fetchEntities() {
+      const result = yield new Entities().get();
+      //self.setEntities(result.entities);
+      self.entities = result.entities;
+      console.log('fetch', result);
+    });
     function addEntity(id, x, y) {
       const entity = Entity.create({
         id: id,
@@ -50,6 +57,9 @@ export const Scene = types
       });
       return found;
     }
-    return { addEntity, findEntity };
+    function setEntities(newEntities) {
+      self.entities = newEntities;
+    }
+    return { addEntity, findEntity, fetchEntities, setEntities };
   });
 
